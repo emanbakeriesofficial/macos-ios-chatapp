@@ -1,1170 +1,1870 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="Apple Chat">
-  <meta name="theme-color" content="#F5F5F7">
-  <title>Apple Chat</title>
-  
-  <!-- Apple Touch Icons -->
-  <link rel="apple-touch-icon" href="image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect width='180' height='180' fill='%23007AFF'/><path d='M90 40c-8 0-15 3-20 8-4-5-11-8-19-8-14 0-26 12-26 27 0 18 16 33 45 58 29-25 45-40 45-58 0-15-12-27-26-27z' fill='white'/></svg>">
-  
-  <!-- Supabase JS SDK -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#F5F5F7" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="BlueChat" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="format-detection" content="telephone=no" />
+  <title>BlueChat</title>
+
+  <!-- Apple touch icons (inline SVG data URI; iOS generally accepts, but PNG is the most compatible) -->
+  <link rel="apple-touch-icon" sizes="180x180"
+        href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='180'%20height='180'%20viewBox='0%200%20180%20180'%3E%3Cdefs%3E%3CradialGradient%20id='g'%20cx='30%25'%20cy='20%25'%20r='90%25'%3E%3Cstop%20offset='0%25'%20stop-color='%23ffffff'/%3E%3Cstop%20offset='40%25'%20stop-color='%23f5f5f7'/%3E%3Cstop%20offset='100%25'%20stop-color='%23e9e9ee'/%3E%3C/radialGradient%3E%3C/defs%3E%3Crect%20width='180'%20height='180'%20rx='40'%20fill='url(%23g)'/%3E%3Cpath%20d='M114%2097c-.3-17.2%2014-25.5%2014.6-25.9-8-11.7-20.5-13.3-24.9-13.4-10.6-1.1-20.7%206.2-26.1%206.2-5.4%200-13.7-6-22.5-5.9-11.6.2-22.3%206.7-28.3%2017.1-12.1%2020.8-3.1%2051.7%208.7%2068.6%205.8%208.3%2012.7%2017.6%2021.8%2017.3%208.7-.3%2012-5.6%2022.6-5.6%2010.6%200%2013.6%205.6%2026.1%205.4%2013.1-.2%2021.4-8.7%2027-17.1%206.7-9.8%209.5-19.3%209.7-19.8-.2-.1-18.6-7.1-18.9-28.9Z'%20fill='%23007AFF'/%3E%3Cpath%20d='M96%2051c4.9-5.9%208.2-14.1%207.3-22.2-7.1.3-15.7%204.7-20.8%2010.6-4.6%205.2-8.6%2013.5-7.5%2021.4%207.9.6%2016.1-4%2021-9.8Z'%20fill='%23007AFF'/%3E%3C/svg%3E" />
+  <link rel="icon"
+        href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3E%3Crect%20width='100'%20height='100'%20rx='22'%20fill='%23F5F5F7'/%3E%3Cpath%20d='M64%2056c-.2-9.6%207.8-14.2%208.2-14.5-4.5-6.5-11.4-7.4-13.8-7.5-5.9-.6-11.5%203.5-14.5%203.5-3%200-7.6-3.3-12.5-3.3-6.4.1-12.4%203.8-15.7%209.6-6.7%2011.5-1.7%2028.7%204.8%2038.1%203.2%204.6%207%209.8%2012.1%209.6%204.8-.2%206.7-3.1%2012.5-3.1%205.9%200%207.5%203.1%2014.5%203%207.2-.1%2011.9-4.8%2014.9-9.5%203.7-5.5%205.3-10.7%205.4-11-.1-.1-10.3-4-10.5-16Z'%20fill='%23007AFF'/%3E%3Cpath%20d='M53%2028c2.7-3.3%204.6-7.8%204.1-12.3-3.9.2-8.7%202.6-11.5%205.9-2.5%202.9-4.7%207.5-4.1%2011.8%204.4.3%208.9-2.2%2011.6-5.4Z'%20fill='%23007AFF'/%3E%3C/svg%3E" />
+
+  <!-- Manifest: generated at runtime (see JS). Keep a placeholder link element for iOS/desktop -->
+  <link id="manifestLink" rel="manifest" href="" />
+
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+    :root{
+      --bg: #F5F5F7;
+      --panel: rgba(255,255,255,0.78);
+      --panelSolid: #FFFFFF;
+      --text: #111114;
+      --muted: rgba(17,17,20,0.55);
+      --muted2: rgba(17,17,20,0.35);
+      --line: rgba(17,17,20,0.10);
+      --shadow: 0 14px 35px rgba(0,0,0,0.08);
+      --shadow2: 0 10px 24px rgba(0,0,0,0.10);
+      --radius: 18px;
+      --radius2: 22px;
+      --blue: #007AFF;
+      --blue2: rgba(0,122,255,0.10);
+      --green: #34C759;
+      --danger: #FF3B30;
+      --warn: #FF9500;
+      --bubbleIn: #E9E9EE;
+      --bubbleOut: #007AFF;
+      --bubbleOutText: #fff;
+      --font: ui-sans-serif, -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
+              "Helvetica Neue", Helvetica, Arial, system-ui, "Segoe UI", Roboto, "Noto Sans", "Liberation Sans", sans-serif;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --tiltX: 0deg;
+      --tiltY: 0deg;
+      --logoParallax: 0px;
+      --logoGlow: 0;
+      --logoGlowColor: rgba(0,122,255,0.0);
+      --logoScale: 1;
+      --safeTop: env(safe-area-inset-top);
+      --safeBottom: env(safe-area-inset-bottom);
     }
 
-    :root {
-      --apple-blue: #007AFF;
-      --apple-blue-hover: #0066D6;
-      --apple-gray: #F5F5F7;
-      --apple-dark: #1D1D1F;
-      --apple-border: #E5E5EA;
-      --bubble-sent: #007AFF;
-      --bubble-received: #E9E9EB;
-      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
-      --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.08);
-      --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.12);
-    }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background: var(--apple-gray);
-      color: var(--apple-dark);
-      overflow-x: hidden;
+    *{ box-sizing:border-box; }
+    html, body{
+      height:100%;
+      margin:0;
+      font-family: var(--font);
+      background: radial-gradient(1200px 800px at 30% 10%, #FFFFFF 0%, var(--bg) 60%, #EFEFF4 100%);
+      color: var(--text);
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
     }
 
-    /* Apple Logo Background */
-    #apple-logo-bg {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 50vw;
-      height: 50vw;
-      max-width: 450px;
-      max-height: 450px;
-      opacity: 0.02;
-      pointer-events: none;
+    a{ color: var(--blue); text-decoration:none; }
+    button, input, textarea{ font: inherit; }
+    ::selection{ background: rgba(0,122,255,0.18); }
+
+    /* Top-level layout */
+    .app{
+      height: 100%;
+      display:flex;
+      justify-content:center;
+      padding: calc(18px + var(--safeTop)) 18px calc(18px + var(--safeBottom));
+    }
+    .shell{
+      width: min(1120px, 100%);
+      height: 100%;
+      display:grid;
+      grid-template-columns: 340px 1fr;
+      gap: 16px;
+      position: relative;
+      perspective: 1200px;
+    }
+
+    /* Apple logo watermark layer */
+    .watermark{
+      position:absolute;
+      inset: 10px;
+      border-radius: 26px;
+      pointer-events:none;
       z-index: 0;
-      transition: opacity 0.4s ease, transform 0.2s ease-out;
-      will-change: transform;
+      overflow:hidden;
+      transform-style: preserve-3d;
+      filter: drop-shadow(0 22px 55px rgba(0,0,0,0.06));
     }
-
-    #apple-logo-bg.glow {
+    .watermark .logoWrap{
+      position:absolute;
+      left: 50%;
+      top: 50%;
+      width: 760px;
+      height: 760px;
+      transform:
+        translate(-50%, -50%)
+        translateY(var(--logoParallax))
+        rotateX(var(--tiltX))
+        rotateY(var(--tiltY))
+        scale(var(--logoScale));
+      transform-style: preserve-3d;
+      transition: transform 220ms cubic-bezier(.2,.8,.2,1);
+    }
+    .watermark svg{
+      width: 100%;
+      height: 100%;
       opacity: 0.06;
-      filter: drop-shadow(0 0 40px rgba(0, 122, 255, 0.4));
+    }
+    .watermark .glow{
+      position:absolute;
+      inset:-40px;
+      background: radial-gradient(circle at 50% 50%, rgba(0,122,255,0.22), transparent 55%);
+      opacity: var(--logoGlow);
+      filter: blur(6px);
+      transform: translateZ(-20px);
+      transition: opacity 260ms ease;
+      mix-blend-mode: multiply;
     }
 
-    /* Main Container */
-    #app {
+    /* Panels */
+    .panel{
+      background: var(--panel);
+      backdrop-filter: blur(18px) saturate(1.4);
+      -webkit-backdrop-filter: blur(18px) saturate(1.4);
+      border: 1px solid rgba(255,255,255,0.55);
+      border-top-color: rgba(255,255,255,0.75);
+      border-left-color: rgba(255,255,255,0.75);
+      border-right-color: rgba(17,17,20,0.08);
+      border-bottom-color: rgba(17,17,20,0.10);
+      box-shadow: var(--shadow);
+      border-radius: 26px;
       position: relative;
       z-index: 1;
-      max-width: 800px;
-      margin: 0 auto;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      background: #FFFFFF;
-      box-shadow: var(--shadow-lg);
+      overflow:hidden;
     }
 
-    /* Header */
-    header {
-      background: rgba(255, 255, 255, 0.85);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border-bottom: 1px solid var(--apple-border);
-      padding: 16px 24px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      position: sticky;
-      top: 0;
-      z-index: 100;
+    /* Sidebar */
+    .sidebar{
+      display:flex;
+      flex-direction:column;
+      min-width: 0;
     }
-
-    .header-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .header-title {
-      font-size: 22px;
-      font-weight: 700;
-      letter-spacing: -0.5px;
-    }
-
-    .device-badge {
-      display: inline-block;
-      padding: 4px 10px;
-      background: rgba(0, 122, 255, 0.1);
-      color: var(--apple-blue);
-      border-radius: 12px;
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .header-actions {
-      display: flex;
-      gap: 12px;
-    }
-
-    .icon-btn {
-      width: 38px;
-      height: 38px;
-      border: none;
-      background: var(--apple-gray);
-      border-radius: 50%;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
-      color: var(--apple-dark);
-    }
-
-    .icon-btn:hover {
-      background: #E5E5EA;
-      transform: translateY(-1px);
-    }
-
-    .icon-btn:active {
-      transform: scale(0.92);
-    }
-
-    /* Project Selector */
-    #project-selector {
-      padding: 14px 24px;
-      background: #FAFAFC;
-      border-bottom: 1px solid var(--apple-border);
-      display: flex;
+    .sbTop{
+      padding: 18px 18px 14px;
+      border-bottom: 1px solid var(--line);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
       gap: 10px;
-      overflow-x: auto;
-      scrollbar-width: none;
-      -webkit-overflow-scrolling: touch;
     }
-
-    #project-selector::-webkit-scrollbar {
-      display: none;
+    .brand{
+      display:flex;
+      flex-direction:column;
+      gap: 2px;
+      min-width:0;
     }
-
-    .project-chip {
-      padding: 8px 18px;
-      background: #FFFFFF;
-      border: 1px solid var(--apple-border);
-      border-radius: 20px;
-      cursor: pointer;
-      white-space: nowrap;
-      font-size: 14px;
-      font-weight: 500;
-      color: #333;
-      transition: all 0.2s ease;
-      box-shadow: var(--shadow-sm);
+    .brand .title{
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
     }
-
-    .project-chip:hover {
-      border-color: #C7C7CC;
-    }
-
-    .project-chip.active {
-      background: var(--apple-blue);
-      color: white;
-      border-color: var(--apple-blue);
-      font-weight: 600;
-      box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
-    }
-
-    .project-chip.add-new {
-      background: rgba(0, 122, 255, 0.08);
-      color: var(--apple-blue);
-      border-color: transparent;
-      font-weight: 600;
-      box-shadow: none;
-    }
-
-    .project-chip.add-new:hover {
-      background: rgba(0, 122, 255, 0.15);
-    }
-
-    /* Chat Container */
-    #chat-container {
-      flex: 1;
-      overflow-y: auto;
-      padding: 24px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    /* Message Bubble */
-    .message {
-      display: flex;
+    .chip{
+      display:inline-flex;
+      align-items:center;
       gap: 8px;
-      align-items: flex-end;
-      animation: messageSlideIn 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(17,17,20,0.10);
+      background: rgba(255,255,255,0.65);
+      font-size: 12px;
+      color: var(--muted);
+      max-width:100%;
+    }
+    .chip b{ color: var(--text); font-weight: 600; }
+    .sbActions{
+      display:flex;
+      gap: 10px;
+      align-items:center;
+      flex-shrink:0;
+    }
+    .iconBtn{
+      width: 36px; height: 36px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      border-radius: 12px;
+      border: 1px solid rgba(17,17,20,0.10);
+      background: rgba(255,255,255,0.65);
+      cursor:pointer;
+      transition: transform 140ms ease, box-shadow 140ms ease, background 140ms ease;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.06);
+    }
+    .iconBtn:hover{
+      transform: translateY(-1px) rotateX(2deg);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.10);
+      background: rgba(255,255,255,0.78);
+    }
+    .iconBtn:active{
+      transform: translateY(0px) scale(0.98);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    }
+    .icon{
+      width: 18px; height: 18px;
+      fill: none;
+      stroke: rgba(17,17,20,0.85);
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
     }
 
-    @keyframes messageSlideIn {
-      from { opacity: 0; transform: translateY(12px) scale(0.98); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
+    .sbBody{
+      padding: 14px 14px 10px;
+      display:flex;
+      flex-direction:column;
+      gap: 10px;
+      min-height:0;
+      flex: 1;
     }
-
-    .message.sent {
-      flex-direction: row-reverse;
+    .searchRow{
+      display:flex;
+      gap: 10px;
+      align-items:center;
     }
-
-    .message-bubble {
-      max-width: 75%;
-      padding: 10px 16px;
-      border-radius: 20px;
+    .input{
+      flex: 1;
+      border-radius: 14px;
+      border: 1px solid rgba(17,17,20,0.10);
+      background: rgba(255,255,255,0.75);
+      padding: 10px 12px;
+      outline:none;
+      transition: box-shadow 160ms ease, border-color 160ms ease, transform 160ms ease;
+    }
+    .input:focus{
+      border-color: rgba(0,122,255,0.45);
+      box-shadow: 0 0 0 4px rgba(0,122,255,0.12);
+    }
+    .projectList{
+      overflow:auto;
+      padding-right: 6px;
+      min-height:0;
+    }
+    .proj{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+      padding: 10px 10px;
+      border-radius: 16px;
+      cursor:pointer;
+      border: 1px solid transparent;
+      transition: transform 140ms ease, background 140ms ease, border-color 140ms ease, box-shadow 140ms ease;
       position: relative;
-      word-wrap: break-word;
-      font-size: 15.5px;
-      line-height: 1.45;
-      box-shadow: var(--shadow-sm);
-    }
-
-    .message.sent .message-bubble {
-      background: var(--bubble-sent);
-      color: white;
-      border-bottom-right-radius: 4px; /* iMessage tail effect */
-    }
-
-    .message.received .message-bubble {
-      background: var(--bubble-received);
-      color: var(--apple-dark);
-      border-bottom-left-radius: 4px; /* iMessage tail effect */
-    }
-
-    .message-text {
-      white-space: pre-wrap;
-    }
-
-    .message-meta {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      margin-top: 4px;
-      font-size: 11px;
-      opacity: 0.6;
-      justify-content: flex-end;
-    }
-
-    .message.received .message-meta {
-      justify-content: flex-start;
-      opacity: 0.5;
-    }
-
-    .copy-btn {
-      width: 28px;
-      height: 28px;
-      border: none;
-      background: var(--apple-gray);
-      border-radius: 50%;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      transition: all 0.2s ease;
-      flex-shrink: 0;
-      color: #86868B;
-      margin-bottom: 20px;
-    }
-
-    .message:hover .copy-btn {
-      opacity: 1;
-    }
-
-    .copy-btn:hover {
-      background: #E5E5EA;
-      color: #333;
-    }
-
-    /* Empty States */
-    .empty-state {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100%;
-      color: #86868B;
-      text-align: center;
-      animation: fadeIn 0.4s ease;
-    }
-
-    .empty-state svg {
-      margin-bottom: 16px;
-      opacity: 0.4;
-      width: 56px;
-      height: 56px;
-    }
-
-    .empty-state h3 {
-      font-size: 18px;
-      font-weight: 600;
-      color: #333;
       margin-bottom: 8px;
     }
-
-    .empty-state p {
+    .proj:hover{
+      background: rgba(0,122,255,0.06);
+      border-color: rgba(0,122,255,0.12);
+      transform: translateY(-1px);
+      box-shadow: 0 10px 18px rgba(0,0,0,0.06);
+    }
+    .proj.active{
+      background: rgba(0,122,255,0.10);
+      border-color: rgba(0,122,255,0.20);
+      box-shadow: 0 12px 24px rgba(0,0,0,0.08);
+    }
+    .projMain{
+      min-width:0;
+      display:flex;
+      flex-direction:column;
+      gap: 3px;
+    }
+    .projName{
+      font-weight: 650;
+      letter-spacing: -0.01em;
       font-size: 14px;
-      max-width: 250px;
-      line-height: 1.5;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
     }
-
-    /* Input Area */
-    #input-area {
-      padding: 16px 24px;
-      background: rgba(255, 255, 255, 0.85);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border-top: 1px solid var(--apple-border);
-      display: flex;
-      gap: 12px;
-      align-items: flex-end;
-      padding-bottom: max(16px, env(safe-area-inset-bottom));
+    .projMeta{
+      font-size: 12px;
+      color: var(--muted);
+      display:flex;
+      gap: 8px;
+      align-items:center;
     }
-
-    #message-input {
-      flex: 1;
-      border: 1px solid var(--apple-border);
-      border-radius: 20px;
-      padding: 10px 16px;
-      font-size: 16px; /* Prevents iOS zoom */
-      font-family: inherit;
-      resize: none;
-      max-height: 120px;
-      background: #FAFAFC;
-      transition: all 0.2s ease;
-      line-height: 1.4;
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap: 6px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(17,17,20,0.10);
+      background: rgba(255,255,255,0.70);
+      color: var(--muted);
+      font-size: 11px;
     }
-
-    #message-input:focus {
-      outline: none;
-      background: #FFFFFF;
-      border-color: var(--apple-blue);
-      box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.15);
+    .dot{
+      width: 6px; height: 6px;
+      border-radius: 999px;
+      background: rgba(0,0,0,0.15);
     }
+    .dot.blue{ background: var(--blue); }
+    .dot.green{ background: var(--green); }
 
-    #send-btn {
-      width: 40px;
-      height: 40px;
-      border: none;
-      background: var(--apple-blue);
+    .sbBottom{
+      padding: 12px 14px 14px;
+      border-top: 1px solid var(--line);
+      display:flex;
+      flex-direction:column;
+      gap: 10px;
+    }
+    .row{
+      display:flex;
+      gap: 10px;
+      align-items:center;
+    }
+    .btn{
+      border-radius: 14px;
+      border: 1px solid rgba(17,17,20,0.10);
+      background: rgba(255,255,255,0.75);
+      padding: 10px 12px;
+      cursor:pointer;
+      transition: transform 140ms ease, box-shadow 140ms ease, background 140ms ease;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.06);
+      user-select:none;
+    }
+    .btn:hover{
+      transform: translateY(-1px);
+      box-shadow: 0 12px 22px rgba(0,0,0,0.10);
+      background: rgba(255,255,255,0.88);
+    }
+    .btn:active{
+      transform: translateY(0px) scale(0.985);
+      box-shadow: 0 5px 12px rgba(0,0,0,0.08);
+    }
+    .btn.primary{
+      background: var(--blue);
+      border-color: rgba(0,0,0,0.04);
       color: white;
-      border-radius: 50%;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
-      flex-shrink: 0;
+      box-shadow: 0 12px 24px rgba(0,122,255,0.25);
+    }
+    .btn.primary:hover{
+      box-shadow: 0 18px 34px rgba(0,122,255,0.30);
+    }
+    .btn.primary:active{
+      box-shadow: 0 10px 18px rgba(0,122,255,0.24);
+    }
+    .btn.ghost{
+      background: rgba(0,122,255,0.08);
+      border-color: rgba(0,122,255,0.16);
+      color: rgba(0,122,255,0.98);
     }
 
-    #send-btn:hover:not(:disabled) {
-      background: var(--apple-blue-hover);
+    /* Main */
+    .main{
+      display:flex;
+      flex-direction:column;
+      min-width:0;
+    }
+    .mainTop{
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--line);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 12px;
+      min-height: 68px;
+    }
+    .mainTitle{
+      display:flex;
+      flex-direction:column;
+      min-width:0;
+      gap: 3px;
+    }
+    .mainTitle .h{
+      font-size: 16px;
+      font-weight: 750;
+      letter-spacing: -0.01em;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .mainTitle .sub{
+      font-size: 12px;
+      color: var(--muted);
+      display:flex;
+      gap: 10px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap: 8px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(17,17,20,0.10);
+      background: rgba(255,255,255,0.65);
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .pill code{
+      font-family: var(--mono);
+      font-size: 11px;
+      color: rgba(17,17,20,0.70);
+    }
+    .mainActions{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      flex-shrink:0;
+    }
+
+    .chat{
+      flex: 1;
+      min-height:0;
+      display:flex;
+      flex-direction:column;
+    }
+    .messages{
+      flex: 1;
+      min-height:0;
+      overflow:auto;
+      padding: 18px 18px 10px;
+      scroll-behavior: smooth;
+    }
+    .messages::-webkit-scrollbar{ width: 10px; }
+    .messages::-webkit-scrollbar-thumb{
+      background: rgba(17,17,20,0.12);
+      border-radius: 999px;
+      border: 3px solid rgba(255,255,255,0.1);
+    }
+
+    .msgGroup{
+      display:flex;
+      flex-direction:column;
+      gap: 10px;
+      padding-bottom: 16px;
+    }
+    .rowMsg{
+      display:flex;
+      align-items:flex-end;
+      gap: 10px;
+      animation: pop 260ms cubic-bezier(.2,.8,.2,1);
+    }
+    @keyframes pop{
+      from{ opacity: 0; transform: translateY(8px) scale(0.98); }
+      to{ opacity: 1; transform: translateY(0px) scale(1); }
+    }
+    .rowMsg.in{ justify-content:flex-start; }
+    .rowMsg.out{ justify-content:flex-end; }
+
+    .bubble{
+      max-width: min(72%, 680px);
+      padding: 10px 12px;
+      border-radius: 20px;
+      position: relative;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+      transform-style: preserve-3d;
+      transition: transform 160ms ease, box-shadow 160ms ease;
+      border: 1px solid rgba(0,0,0,0.03);
+      word-wrap: break-word;
+      white-space: pre-wrap;
+      line-height: 1.35;
+      font-size: 14px;
+    }
+    .bubble:hover{
+      transform: translateY(-1px) rotateX(1.5deg);
+      box-shadow: 0 16px 28px rgba(0,0,0,0.10);
+    }
+    .bubble:active{
+      transform: translateY(0px) scale(0.995);
+      box-shadow: 0 10px 18px rgba(0,0,0,0.09);
+    }
+    .bubble.in{
+      background: var(--bubbleIn);
+      color: rgba(0,0,0,0.86);
+      border-top-left-radius: 10px;
+    }
+    .bubble.out{
+      background: linear-gradient(180deg, rgba(0,122,255,0.98), rgba(0,122,255,0.92));
+      color: var(--bubbleOutText);
+      border-top-right-radius: 10px;
+      box-shadow: 0 16px 30px rgba(0,122,255,0.22);
+    }
+
+    .metaLine{
+      margin-top: 6px;
+      font-size: 11px;
+      color: rgba(17,17,20,0.45);
+      display:flex;
+      align-items:center;
+      gap: 10px;
+    }
+    .bubble.out .metaLine{
+      color: rgba(255,255,255,0.70);
+    }
+    .copyBtn{
+      position:absolute;
+      top: 8px;
+      right: 8px;
+      width: 28px;
+      height: 28px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.22);
+      background: rgba(255,255,255,0.10);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      opacity: 0;
       transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
+      transition: opacity 140ms ease, transform 140ms ease, background 140ms ease;
+      cursor:pointer;
+      user-select:none;
+    }
+    .bubble.in .copyBtn{
+      border-color: rgba(17,17,20,0.10);
+      background: rgba(255,255,255,0.55);
+    }
+    .bubble:hover .copyBtn{
+      opacity: 1;
+      transform: translateY(0px);
+    }
+    .copyBtn:hover{
+      background: rgba(255,255,255,0.22);
+    }
+    .bubble.in .copyBtn:hover{
+      background: rgba(255,255,255,0.80);
+    }
+    .copyBtn:active{
+      transform: translateY(0px) scale(0.98);
+    }
+    .copyBtn svg{
+      width: 16px;
+      height: 16px;
+      stroke: rgba(255,255,255,0.92);
+    }
+    .bubble.in .copyBtn svg{
+      stroke: rgba(17,17,20,0.85);
     }
 
-    #send-btn:active:not(:disabled) {
-      transform: scale(0.92);
+    .composer{
+      border-top: 1px solid var(--line);
+      padding: 12px 12px calc(12px + var(--safeBottom));
+      display:flex;
+      gap: 10px;
+      align-items:flex-end;
+      background: linear-gradient(180deg, rgba(255,255,255,0.0), rgba(255,255,255,0.35));
+    }
+    .ta{
+      flex: 1;
+      resize:none;
+      min-height: 44px;
+      max-height: 140px;
+      border-radius: 18px;
+      border: 1px solid rgba(17,17,20,0.10);
+      background: rgba(255,255,255,0.82);
+      padding: 12px 12px;
+      outline:none;
+      line-height: 1.35;
+      transition: box-shadow 160ms ease, border-color 160ms ease;
+    }
+    .ta:focus{
+      border-color: rgba(0,122,255,0.45);
+      box-shadow: 0 0 0 4px rgba(0,122,255,0.12);
+    }
+    .sendBtn{
+      width: 48px;
+      height: 48px;
+      border-radius: 18px;
+      border: 0;
+      background: var(--blue);
+      cursor:pointer;
+      box-shadow: 0 18px 34px rgba(0,122,255,0.28);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      transition: transform 140ms ease, box-shadow 140ms ease, filter 140ms ease;
+    }
+    .sendBtn:hover{
+      transform: translateY(-1px);
+      box-shadow: 0 24px 46px rgba(0,122,255,0.32);
+      filter: saturate(1.05);
+    }
+    .sendBtn:active{
+      transform: translateY(0px) scale(0.985);
+      box-shadow: 0 14px 24px rgba(0,122,255,0.26);
+    }
+    .sendBtn:disabled{
+      opacity: 0.55;
+      cursor:not-allowed;
+      box-shadow: 0 10px 18px rgba(0,122,255,0.14);
+      transform:none;
+    }
+    .sendBtn svg{
+      width: 20px; height: 20px;
+      stroke: white;
+      stroke-width: 2.2;
+      fill:none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      transform: translateX(1px);
     }
 
-    #send-btn:disabled {
-      background: #E5E5EA;
-      color: #86868B;
-      cursor: not-allowed;
-    }
-
-    /* Modals */
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.4);
+    /* Settings modal */
+    .modalOverlay{
+      position:fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.28);
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
-      z-index: 1000;
-      align-items: center;
-      justify-content: center;
-      animation: fadeIn 0.2s ease;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index: 50;
+      padding: 18px;
     }
-
-    .modal.active {
-      display: flex;
+    .modalOverlay.show{ display:flex; }
+    .modal{
+      width: min(520px, 100%);
+      background: rgba(255,255,255,0.92);
+      border: 1px solid rgba(255,255,255,0.70);
+      border-radius: 22px;
+      box-shadow: 0 30px 70px rgba(0,0,0,0.22);
+      overflow:hidden;
+      transform: translateY(6px);
+      animation: modalIn 200ms cubic-bezier(.2,.8,.2,1) forwards;
     }
-
-    .modal-content {
-      background: white;
-      border-radius: 24px;
-      padding: 32px;
-      max-width: 380px;
-      width: 90%;
-      box-shadow: var(--shadow-lg);
-      animation: modalSlideUp 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    @keyframes modalIn{
+      to{ transform: translateY(0px); }
     }
-
-    @keyframes modalSlideUp {
-      from { opacity: 0; transform: translateY(20px) scale(0.95); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
+    .modalHead{
+      padding: 16px 16px 12px;
+      border-bottom: 1px solid rgba(17,17,20,0.10);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
     }
-
-    .modal-title {
-      font-size: 22px;
-      font-weight: 700;
-      margin-bottom: 24px;
-      letter-spacing: -0.5px;
-      text-align: center;
+    .modalHead .t{
+      font-weight: 750;
+      letter-spacing: -0.01em;
     }
-
-    .modal-input {
-      width: 100%;
-      padding: 14px 16px;
-      background: #FAFAFC;
-      border: 1px solid var(--apple-border);
-      border-radius: 14px;
-      font-size: 16px;
-      font-family: inherit;
-      margin-bottom: 20px;
-      transition: all 0.2s ease;
-    }
-
-    .modal-input:focus {
-      outline: none;
-      background: #FFFFFF;
-      border-color: var(--apple-blue);
-      box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.15);
-    }
-
-    .modal-actions {
-      display: flex;
+    .modalBody{
+      padding: 14px 16px 16px;
+      display:flex;
+      flex-direction:column;
       gap: 12px;
     }
-
-    .modal-btn {
-      flex: 1;
-      padding: 14px;
-      border: none;
-      border-radius: 14px;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s ease;
+    .field{
+      display:flex;
+      flex-direction:column;
+      gap: 6px;
+    }
+    .label{
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .hint{
+      font-size: 12px;
+      color: var(--muted2);
+      line-height: 1.35;
+    }
+    .switchRow{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: 16px;
+      border: 1px solid rgba(17,17,20,0.10);
+      background: rgba(255,255,255,0.65);
+    }
+    .switchRow .sTxt{
+      display:flex;
+      flex-direction:column;
+      gap: 2px;
+      min-width:0;
+    }
+    .switchRow .sTxt b{
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .switchRow .sTxt span{
+      font-size: 12px;
+      color: var(--muted);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
     }
 
-    .modal-btn.primary {
-      background: var(--apple-blue);
-      color: white;
+    .toggle{
+      width: 46px;
+      height: 28px;
+      border-radius: 999px;
+      border: 1px solid rgba(17,17,20,0.14);
+      background: rgba(17,17,20,0.10);
+      position:relative;
+      cursor:pointer;
+      flex-shrink:0;
+      transition: background 160ms ease, border-color 160ms ease;
     }
-
-    .modal-btn.primary:disabled {
-      background: #A1C6F5;
-      cursor: not-allowed;
+    .toggle::after{
+      content:"";
+      position:absolute;
+      top: 3px;
+      left: 3px;
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.95);
+      box-shadow: 0 8px 14px rgba(0,0,0,0.16);
+      transition: transform 160ms cubic-bezier(.2,.8,.2,1);
     }
-
-    .modal-btn.secondary {
-      background: var(--apple-gray);
-      color: var(--apple-dark);
+    .toggle.on{
+      background: rgba(0,122,255,0.36);
+      border-color: rgba(0,122,255,0.30);
     }
-
-    .modal-btn:hover:not(:disabled) {
-      filter: brightness(0.95);
-    }
-
-    .modal-btn:active:not(:disabled) {
-      transform: scale(0.96);
+    .toggle.on::after{
+      transform: translateX(18px);
+      background: #fff;
     }
 
     /* Toast */
-    #toast {
+    .toastWrap{
       position: fixed;
-      bottom: max(90px, env(safe-area-inset-bottom) + 90px);
-      left: 50%;
-      transform: translateX(-50%) translateY(100px);
-      background: rgba(29, 29, 31, 0.9);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      color: white;
-      padding: 12px 24px;
-      border-radius: 20px;
-      font-size: 14px;
-      font-weight: 500;
-      box-shadow: var(--shadow-md);
-      z-index: 2000;
+      left: 0; right: 0;
+      bottom: calc(14px + var(--safeBottom));
+      display:flex;
+      justify-content:center;
+      pointer-events:none;
+      z-index: 80;
+      padding: 0 12px;
+    }
+    .toast{
+      pointer-events:auto;
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.55);
+      background: rgba(17,17,20,0.78);
+      color: rgba(255,255,255,0.92);
+      box-shadow: 0 18px 40px rgba(0,0,0,0.22);
+      transform: translateY(8px);
       opacity: 0;
-      transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+      transition: transform 180ms ease, opacity 180ms ease;
+      max-width: min(720px, 100%);
     }
-
-    #toast.show {
+    .toast.show{
+      transform: translateY(0px);
       opacity: 1;
-      transform: translateX(-50%) translateY(0);
     }
-
-    /* Loading State */
-    .loading {
-      display: flex;
-      justify-content: center;
-      padding: 40px;
+    .toast .mini{
+      font-size: 12px;
+      color: rgba(255,255,255,0.75);
     }
-
-    .spinner {
-      width: 28px;
-      height: 28px;
-      border: 3px solid rgba(0, 122, 255, 0.2);
-      border-top-color: var(--apple-blue);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
+    .toast .x{
+      margin-left:auto;
+      width: 28px; height: 28px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.08);
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      justify-content:center;
     }
+    .toast .x:hover{ background: rgba(255,255,255,0.14); }
+    .toast .x svg{ width: 14px; height: 14px; stroke: #fff; stroke-width: 2.2; fill:none; stroke-linecap: round; }
 
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    /* Share Code Display */
-    .share-code-display {
-      background: #FAFAFC;
-      border: 1px solid var(--apple-border);
-      padding: 20px;
+    /* Skeleton loaders */
+    .skeleton{
       border-radius: 16px;
-      margin-bottom: 24px;
-      text-align: center;
+      background: linear-gradient(90deg,
+        rgba(17,17,20,0.06) 0%,
+        rgba(17,17,20,0.10) 35%,
+        rgba(17,17,20,0.06) 70%);
+      background-size: 220% 100%;
+      animation: shimmer 1.2s ease-in-out infinite;
+    }
+    @keyframes shimmer{
+      0%{ background-position: 0% 0; }
+      100%{ background-position: 220% 0; }
     }
 
-    .share-code-label {
-      font-size: 13px;
-      color: #86868B;
-      margin-bottom: 8px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      font-weight: 600;
-    }
-
-    .share-code-value {
-      font-size: 32px;
-      font-weight: 700;
-      letter-spacing: 4px;
-      color: var(--apple-blue);
-      font-family: 'SF Mono', 'Monaco', monospace;
-    }
-
-    @media (max-width: 600px) {
-      .message-bubble { max-width: 85%; }
-      header { padding: 12px 16px; }
-      #chat-container { padding: 16px; }
+    /* Mobile */
+    @media (max-width: 940px){
+      .shell{ grid-template-columns: 1fr; }
+      .sidebar{ display:none; }
+      .watermark{ inset: 6px; }
     }
   </style>
 </head>
+
 <body>
-  <!-- Apple Logo Background -->
-  <svg id="apple-logo-bg" viewBox="0 0 814 1000" xmlns="http://www.w3.org/2000/svg">
-    <path d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76.5 0-103.7 40.8-165.9 40.8s-105.6-57-155.5-127C46.7 790.7 0 663 0 541.8c0-194.4 126.4-297.5 250.8-297.5 66.1 0 121.2 43.4 162.7 43.4 39.5 0 101.1-46 176.3-46 28.5 0 130.9 2.6 198.3 99.2zm-234-181.5c31.1-36.9 53.1-88.1 53.1-139.3 0-7.1-.6-14.3-1.9-20.1-50.6 1.9-110.8 33.7-147.1 75.8-28.5 32.4-55.1 83.6-55.1 135.5 0 7.8 1.3 15.6 1.9 18.1 3.2.6 8.4 1.3 13.6 1.3 45.4 0 102.5-30.4 135.5-71.3z" fill="currentColor"/>
-  </svg>
-
-  <div id="app">
-    <header>
-      <div class="header-left">
-        <div class="header-title">Messages</div>
-        <span class="device-badge" id="device-badge">Loading...</span>
+  <div class="app">
+    <div class="shell" id="shell">
+      <!-- Watermark behind everything -->
+      <div class="watermark" id="watermark">
+        <div class="glow"></div>
+        <div class="logoWrap" id="logoWrap" aria-hidden="true">
+          <!-- Apple logo watermark (stylized) -->
+          <svg viewBox="0 0 512 512" role="img" aria-label="">
+            <path fill="rgba(17,17,20,1)" d="M349.7 192.4c-32.1-19.1-53.8-52.3-53.4-88.8.5-43.1 25.7-80.9 64.4-101.2-21.8-31.1-57.1-49.8-95.6-52.8-40.3-3.2-79.4 23.6-100 23.6-21 0-52.4-22.8-86.3-22.1C34.1-148.1 0-123.4 0-76.2c0 50.1 18.5 103.6 41.3 147.9 21.2 41.4 47.6 88 82.5 86.4 32.2-1.3 44.3-20.8 83.2-20.8 38.6 0 49.2 20.8 83.6 20.1 36.6-.7 59.8-41.8 80.8-83.4 24.6-48.5 34.8-95.4 35.2-97.8-.8-.4-67.1-25.8-67.8-99.9z" transform="translate(90 206) scale(0.68)"/>
+            <path fill="rgba(17,17,20,1)" d="M331.9 5.8c-27.1 32.8-48.9 79.2-43.8 127.3 38.8 3 78.8-21.5 105.6-54.2 26.1-31.8 49-78.6 43-125.6-42.8 1.7-83.6 27.8-104.8 52.5z" transform="translate(100 60) scale(0.68)"/>
+          </svg>
+        </div>
       </div>
-      <div class="header-actions">
-        <button class="icon-btn" id="share-btn" title="Share Project">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
-            <polyline points="16 6 12 2 8 6"></polyline>
-            <line x1="12" y1="2" x2="12" y2="15"></line>
+
+      <!-- Sidebar -->
+      <aside class="panel sidebar" id="sidebar">
+        <div class="sbTop">
+          <div class="brand">
+            <div class="title">
+              <span style="display:inline-flex; width:22px; height:22px; border-radius:9px; background:rgba(0,122,255,0.10); align-items:center; justify-content:center; border:1px solid rgba(0,122,255,0.18);">
+                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" style="stroke: rgba(0,122,255,0.95);">
+                  <path d="M21 15a4 4 0 0 1-4 4H7l-4 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"></path>
+                </svg>
+              </span>
+              <span>BlueChat</span>
+            </div>
+            <div class="chip" title="Detected device persona (editable in Settings if needed)">
+              <span class="dot blue" aria-hidden="true"></span>
+              <span id="personaChip">Detecting…</span>
+            </div>
+          </div>
+          <div class="sbActions">
+            <button class="iconBtn" id="settingsBtn" title="Settings">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"></path>
+                <path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 0 1 0 2.83l-.2.2a2 2 0 0 1-2.83 0l-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 .31 1.7 1.7 0 0 0-.69 1.4V21a2 2 0 0 1-2 2h-.28a2 2 0 0 1-2-2v-.09a1.7 1.7 0 0 0-1.69-1.51 1.7 1.7 0 0 0-1 .31l-.06.06a2 2 0 0 1-2.83 0l-.2-.2a2 2 0 0 1 0-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.4-.69H3a2 2 0 0 1-2-2v-.28a2 2 0 0 1 2-2h.09a1.7 1.7 0 0 0 1.51-1.69 1.7 1.7 0 0 0-.31-1l-.06-.06a2 2 0 0 1 0-2.83l.2-.2a2 2 0 0 1 2.83 0l.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 .69-1.4V3a2 2 0 0 1 2-2h.28a2 2 0 0 1 2 2v.09a1.7 1.7 0 0 0 1.69 1.51 1.7 1.7 0 0 0 1-.31l.06-.06a2 2 0 0 1 2.83 0l.2.2a2 2 0 0 1 0 2.83l-.06.06A1.7 1.7 0 0 0 19.4 9c.41 0 .79-.14 1.1-.38.3-.24.67-.38 1.06-.38H21a2 2 0 0 1 2 2v.28a2 2 0 0 1-2 2h-.09a1.7 1.7 0 0 0-1.51 1.69z" opacity="0.0"></path>
+                <path d="M21 12a9 9 0 0 0-.16-1.7l-2.05-.38a7 7 0 0 0-.58-1.4l1.2-1.7A9.2 9.2 0 0 0 17.9 5.3l-1.7 1.2a7 7 0 0 0-1.4-.58L14.4 3.9A9 9 0 0 0 12 3.5c-.58 0-1.15.06-1.7.16l-.38 2.05a7 7 0 0 0-1.4.58L6.82 5.1A9.2 9.2 0 0 0 5.3 6.1l1.2 1.7a7 7 0 0 0-.58 1.4l-2.05.38A9 9 0 0 0 3.5 12c0 .58.06 1.15.16 1.7l2.05.38a7 7 0 0 0 .58 1.4l-1.2 1.7a9.2 9.2 0 0 0 1.02 1.52l1.7-1.2a7 7 0 0 0 1.4.58l.38 2.05c.55.1 1.12.16 1.7.16.58 0 1.15-.06 1.7-.16l.38-2.05a7 7 0 0 0 1.4-.58l1.7 1.2c.54-.46 1.05-.98 1.52-1.52l-1.2-1.7c.23-.46.43-.93.58-1.4l2.05-.38c.1-.55.16-1.12.16-1.7z"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="sbBody">
+          <div class="searchRow">
+            <input class="input" id="projectSearch" placeholder="Search projects…" autocomplete="off" />
+            <button class="iconBtn" id="newProjectBtn" title="Create project">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 5v14"></path>
+                <path d="M5 12h14"></path>
+              </svg>
+            </button>
+          </div>
+
+          <div class="projectList" id="projectList" aria-label="Projects"></div>
+
+          <!-- Skeleton placeholder -->
+          <div id="projectSkeleton" style="display:none;">
+            <div class="proj skeleton" style="height:56px; margin-bottom:8px;"></div>
+            <div class="proj skeleton" style="height:56px; margin-bottom:8px;"></div>
+            <div class="proj skeleton" style="height:56px; margin-bottom:8px;"></div>
+          </div>
+        </div>
+
+        <div class="sbBottom">
+          <div class="row">
+            <button class="btn ghost" id="joinProjectBtn" style="flex:1;">Join via share code</button>
+            <button class="btn" id="copyDeviceBtn" title="Copy device id">Device</button>
+          </div>
+          <div class="hint" id="sbHint">
+            Uses Supabase Realtime. Each device signs in anonymously and gets a stable <code>device_id</code>.
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main -->
+      <main class="panel main">
+        <div class="mainTop">
+          <div class="mainTitle">
+            <div class="h" id="activeProjectTitle">Loading…</div>
+            <div class="sub">
+              <span class="pill"><span class="dot green" aria-hidden="true"></span><span id="rtStatus">Connecting…</span></span>
+              <span class="pill" id="sharePill" style="display:none;">
+                Share code: <code id="shareCodeText"></code>
+                <button class="iconBtn" id="copyShareBtn" title="Copy share code" style="width:32px; height:32px; border-radius:12px;">
+                  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" style="width:16px;height:16px;">
+                    <path d="M9 9h10v10H9z"></path>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                  </svg>
+                </button>
+              </span>
+            </div>
+          </div>
+          <div class="mainActions">
+            <button class="btn" id="toggleSidebarBtn" style="display:none;">Projects</button>
+            <button class="btn" id="toggleTimestampsBtn" title="Toggle timestamps">Timestamps</button>
+          </div>
+        </div>
+
+        <section class="chat">
+          <div class="messages" id="messages" aria-label="Messages">
+            <div class="msgGroup" id="messageList"></div>
+
+            <div id="messageSkeleton" style="display:none; padding: 10px 0 20px;">
+              <div class="rowMsg in"><div class="bubble skeleton" style="width: 260px; height: 46px;"></div></div>
+              <div style="height:10px;"></div>
+              <div class="rowMsg out" style="justify-content:flex-end;"><div class="bubble skeleton" style="width: 320px; height: 62px;"></div></div>
+              <div style="height:10px;"></div>
+              <div class="rowMsg in"><div class="bubble skeleton" style="width: 210px; height: 46px;"></div></div>
+            </div>
+          </div>
+
+          <div class="composer">
+            <textarea class="ta" id="composer" placeholder="Message…" rows="1" maxlength="2000"></textarea>
+            <button class="sendBtn" id="sendBtn" title="Send" aria-label="Send">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M22 2L11 13"></path>
+                <path d="M22 2l-7 20-4-9-9-4 20-7z"></path>
+              </svg>
+            </button>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div class="modalOverlay" id="settingsOverlay" role="dialog" aria-modal="true" aria-label="Settings">
+    <div class="modal">
+      <div class="modalHead">
+        <div class="t">Settings</div>
+        <button class="iconBtn" id="closeSettingsBtn" title="Close">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M18 6L6 18"></path>
+            <path d="M6 6l12 12"></path>
           </svg>
         </button>
-        <button class="icon-btn" id="settings-btn" title="Join Project">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M16 21v-2a4 4 0 0 0-4-4H5.5"></path>
-            <circle cx="8.5" cy="7" r="4"></circle>
-            <line x1="20" y1="8" x2="20" y2="14"></line>
-            <line x1="23" y1="11" x2="17" y2="11"></line>
-          </svg>
-        </button>
       </div>
-    </header>
+      <div class="modalBody">
+        <div class="field">
+          <div class="label">Your display name (optional)</div>
+          <input class="input" id="displayNameInput" placeholder="e.g., ios_user" maxlength="32" />
+          <div class="hint">Used only as metadata in messages; privacy-friendly demo model.</div>
+        </div>
 
-    <div id="project-selector">
-      <div class="project-chip add-new" id="add-project-btn">+ New Project</div>
-    </div>
+        <div class="field">
+          <div class="label">Persona</div>
+          <div class="switchRow">
+            <div class="sTxt">
+              <b id="personaLabel">macos_user</b>
+              <span>Auto-detected; override if needed</span>
+            </div>
+            <div class="toggle" id="personaToggle" role="switch" aria-checked="false" tabindex="0"></div>
+          </div>
+          <div class="hint">If iOS detection fails, default is <b>macos_user</b>. Toggle to switch.</div>
+        </div>
 
-    <div id="chat-container">
-      <div class="loading"><div class="spinner"></div></div>
-    </div>
+        <div class="field">
+          <div class="label">Supabase configuration</div>
+          <div class="hint">
+            This is a static file (GitHub Pages ready). Paste your Supabase URL + anon key below in the code:
+            <br/><code>const SUPABASE_URL</code> and <code>const SUPABASE_ANON_KEY</code>.
+            <br/>Do <b>not</b> commit service role keys.
+          </div>
+        </div>
 
-    <div id="input-area">
-      <textarea id="message-input" placeholder="iMessage" rows="1"></textarea>
-      <button id="send-btn" disabled>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="12" y1="19" x2="12" y2="5"></line>
-          <polyline points="5 12 12 5 19 12"></polyline>
-        </svg>
-      </button>
-    </div>
-  </div>
-
-  <!-- New Project Modal -->
-  <div class="modal" id="new-project-modal">
-    <div class="modal-content">
-      <div class="modal-title">New Project</div>
-      <input type="text" class="modal-input" id="project-name-input" placeholder="Project name" maxlength="50">
-      <div class="modal-actions">
-        <button class="modal-btn secondary" id="cancel-project-btn">Cancel</button>
-        <button class="modal-btn primary" id="create-project-btn">Create</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Join Project Modal -->
-  <div class="modal" id="join-project-modal">
-    <div class="modal-content">
-      <div class="modal-title">Join Project</div>
-      <input type="text" class="modal-input" id="share-code-input" placeholder="Enter 6-digit code" maxlength="6" style="text-transform: uppercase;">
-      <div class="modal-actions">
-        <button class="modal-btn secondary" id="cancel-join-btn">Cancel</button>
-        <button class="modal-btn primary" id="join-project-btn">Join</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Share Project Modal -->
-  <div class="modal" id="share-project-modal">
-    <div class="modal-content">
-      <div class="modal-title">Share Project</div>
-      <div class="share-code-display">
-        <div class="share-code-label">Project Code</div>
-        <div class="share-code-value" id="share-code-value">------</div>
-      </div>
-      <div class="modal-actions">
-        <button class="modal-btn secondary" id="close-share-btn">Close</button>
-        <button class="modal-btn primary" id="copy-code-btn">Copy Code</button>
+        <div class="row" style="justify-content:flex-end;">
+          <button class="btn primary" id="saveSettingsBtn">Save</button>
+        </div>
       </div>
     </div>
   </div>
 
   <!-- Toast -->
-  <div id="toast"></div>
+  <div class="toastWrap" aria-live="polite" aria-atomic="true">
+    <div class="toast" id="toast">
+      <div>
+        <div id="toastTitle" style="font-weight:700; letter-spacing:-0.01em;">Notice</div>
+        <div class="mini" id="toastMsg">—</div>
+      </div>
+      <button class="x" id="toastClose" aria-label="Close toast" title="Close">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M18 6L6 18"></path>
+          <path d="M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Supabase JS (allowed via CDN) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <script>
-    // ============================================
-    // CONFIGURATION - Replace with your Supabase credentials
-    // ============================================
-    const SUPABASE_URL = 'https://uwqoqbpbftdvxoyuvqjx.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV3cW9xYnBiZnRkdnhveXV2cWp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NDgyMDUsImV4cCI6MjA4ODEyNDIwNX0.4NXQZM7-mfdZ7Suq3VhjFbx1-CZBMLGGwd6JooqckDE';
+    /**********************************************************************
+     * PRODUCTION CONFIG
+     * 1) Create a Supabase project, then paste URL + anon key here.
+     * 2) Run the SQL in section (2) of this answer.
+     **********************************************************************/
+    const SUPABASE_URL = "https://YOUR_PROJECT_ID.supabase.co";
+    const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY";
 
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    /**********************************************************************
+     * App constants
+     **********************************************************************/
+    const LIMITS = {
+      projectNameMax: 48,
+      messageMax: 2000,
+      shareCodeLen: 10
+    };
 
-    // ============================================
-    // STATE MANAGEMENT
-    // ============================================
-    let currentUser = null;
-    let currentProject = null;
-    let projects = [];
-    let messages = [];
-    let messageSubscription = null;
+    const STORAGE_KEYS = {
+      deviceId: "bluechat_device_id_v1",
+      persona: "bluechat_persona_v1",
+      displayName: "bluechat_display_name_v1",
+      lastProjectId: "bluechat_last_project_id_v1",
+      showTimestamps: "bluechat_show_timestamps_v1",
+      joinedShareCodes: "bluechat_joined_share_codes_v1"
+    };
 
-    // ============================================
-    // UTILITIES
-    // ============================================
-    function detectDevice() {
-      const ua = navigator.userAgent;
-      if (/iPhone|iPad|iPod/.test(ua)) return 'ios_user';
-      if (/Macintosh|MacIntel/.test(ua)) return 'macos_user';
-      return 'macos_user';
+    /**********************************************************************
+     * Utilities
+     **********************************************************************/
+    const $ = (id) => document.getElementById(id);
+
+    function safeTrim(s){ return (s ?? "").toString().trim(); }
+
+    function uuidLike(){
+      // Stable-enough device id generator (not a security primitive)
+      const b = new Uint8Array(16);
+      crypto.getRandomValues(b);
+      b[6] = (b[6] & 0x0f) | 0x40;
+      b[8] = (b[8] & 0x3f) | 0x80;
+      const hex = [...b].map(x => x.toString(16).padStart(2, "0")).join("");
+      return `${hex.slice(0,8)}-${hex.slice(8,12)}-${hex.slice(12,16)}-${hex.slice(16,20)}-${hex.slice(20)}`;
     }
 
-    function getDeviceId() {
-      let deviceId = localStorage.getItem('device_id');
-      if (!deviceId) {
-        deviceId = 'device_' + Math.random().toString(36).substr(2, 9) + Date.now().toString(36);
-        localStorage.setItem('device_id', deviceId);
+    function randomShareCode(len=LIMITS.shareCodeLen){
+      // Avoid confusing chars (O/0, I/1)
+      const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+      let out = "";
+      const b = new Uint8Array(len);
+      crypto.getRandomValues(b);
+      for(let i=0;i<len;i++){
+        out += alphabet[b[i] % alphabet.length];
       }
-      return deviceId;
+      return out;
     }
 
-    function showToast(message) {
-      const toast = document.getElementById('toast');
-      toast.textContent = message;
-      toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 3000);
+    function formatTime(ts){
+      try{
+        const d = new Date(ts);
+        return d.toLocaleString(undefined, { month:"short", day:"2-digit", hour:"2-digit", minute:"2-digit" });
+      }catch{ return ""; }
     }
 
-    function showModal(modalId) { document.getElementById(modalId).classList.add('active'); }
-    function hideModal(modalId) { document.getElementById(modalId).classList.remove('active'); }
-    function generateShareCode() { return Math.random().toString(36).substr(2, 6).toUpperCase(); }
+    function debounce(fn, ms){
+      let t = null;
+      return (...args) => {
+        clearTimeout(t);
+        t = setTimeout(() => fn(...args), ms);
+      };
+    }
 
-    function initAppleLogoEffects() {
-      const logo = document.getElementById('apple-logo-bg');
-      const chatContainer = document.getElementById('chat-container');
+    function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
 
-      chatContainer.addEventListener('scroll', () => {
-        const scrollable = chatContainer.scrollHeight - chatContainer.clientHeight;
-        if (scrollable > 0) {
-          const scrollPercent = chatContainer.scrollTop / scrollable;
-          logo.style.transform = `translate(-50%, calc(-50% + ${scrollPercent * 25}px))`;
+    async function copyToClipboard(text){
+      try{
+        await navigator.clipboard.writeText(text);
+        toast("Copied", "Copied to clipboard.");
+      }catch(e){
+        // Fallback
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        ta.style.position = "fixed";
+        ta.style.left = "-9999px";
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        ta.remove();
+        toast("Copied", "Copied to clipboard.");
+      }
+    }
+
+    function toast(title, msg, kind="info"){
+      const t = $("toast");
+      $("toastTitle").textContent = title;
+      $("toastMsg").textContent = msg;
+      t.classList.add("show");
+      clearTimeout(toast._timer);
+      toast._timer = setTimeout(() => t.classList.remove("show"), 2600);
+    }
+
+    $("toastClose").addEventListener("click", () => $("toast").classList.remove("show"));
+
+    /**********************************************************************
+     * PWA manifest generation (no extra files needed)
+     **********************************************************************/
+    (function setupManifest(){
+      const manifest = {
+        name: "BlueChat",
+        short_name: "BlueChat",
+        start_url: "./",
+        scope: "./",
+        display: "standalone",
+        background_color: "#F5F5F7",
+        theme_color: "#F5F5F7",
+        description: "iMessage-like chat demo with Supabase Realtime.",
+        icons: [
+          {
+            src: "data:image/svg+xml," + encodeURIComponent(
+              `<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+                <defs>
+                  <radialGradient id="g" cx="30%" cy="20%" r="90%">
+                    <stop offset="0%" stop-color="#FFFFFF"/>
+                    <stop offset="40%" stop-color="#F5F5F7"/>
+                    <stop offset="100%" stop-color="#E9E9EE"/>
+                  </radialGradient>
+                </defs>
+                <rect width="512" height="512" rx="120" fill="url(#g)"/>
+                <path d="M325 305c-1-54 44-80 46-82-26-38-64-44-78-45-33-3-65 20-82 20-17 0-43-19-70-19-36 1-69 21-88 53-38 64-10 160 27 213 18 26 40 56 68 55 28-1 38-17 74-17 35 0 45 17 81 16 36-1 59-26 80-55 21-31 30-61 31-63-1-1-59-23-60-76z" fill="#007AFF"/>
+                <path d="M288 144c16-19 28-45 25-72-23 1-50 15-67 34-15 17-28 44-25 69 25 2 51-12 67-31z" fill="#007AFF"/>
+              </svg>`
+            ),
+            sizes: "512x512",
+            type: "image/svg+xml",
+            purpose: "any maskable"
+          }
+        ]
+      };
+
+      const blob = new Blob([JSON.stringify(manifest)], { type: "application/manifest+json" });
+      const url = URL.createObjectURL(blob);
+      $("manifestLink").setAttribute("href", url);
+    })();
+
+    /**********************************************************************
+     * Device + Persona detection
+     **********************************************************************/
+    function detectPersona(){
+      const ua = navigator.userAgent || "";
+      const isIOS = /iPhone|iPad|iPod/i.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+      const isMac = /Macintosh|Mac OS X/i.test(ua) && !isIOS;
+      if(isIOS) return "ios_user";
+      if(isMac) return "macos_user";
+      return "macos_user";
+    }
+
+    function getOrCreateDeviceId(){
+      let id = localStorage.getItem(STORAGE_KEYS.deviceId);
+      if(!id){
+        id = uuidLike();
+        localStorage.setItem(STORAGE_KEYS.deviceId, id);
+      }
+      return id;
+    }
+
+    /**********************************************************************
+     * Supabase client with dynamic share-code header (for RLS)
+     **********************************************************************/
+    let activeShareCodeHeader = null;
+    const supabase = (() => {
+      // Dynamic header injection without recreating the client:
+      const customFetch = async (input, init = {}) => {
+        const headers = new Headers(init.headers || {});
+        if(activeShareCodeHeader){
+          headers.set("x-share-code", activeShareCodeHeader);
         }
+        init.headers = headers;
+        return fetch(input, init);
+      };
+      return window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+        global: { fetch: customFetch }
       });
+    })();
+
+    /**********************************************************************
+     * State
+     **********************************************************************/
+    const state = {
+      deviceId: getOrCreateDeviceId(),
+      persona: localStorage.getItem(STORAGE_KEYS.persona) || detectPersona(),
+      showTimestamps: (localStorage.getItem(STORAGE_KEYS.showTimestamps) || "false") === "true",
+      displayName: localStorage.getItem(STORAGE_KEYS.displayName) || "",
+      userId: null,              // auth.uid()
+      projects: [],
+      activeProjectId: null,
+      activeProject: null,
+      messages: [],
+      msgSub: null,
+      presence: { realtime: "Connecting…" },
+      isLoadingProjects: false,
+      isLoadingMessages: false
+    };
+
+    /**********************************************************************
+     * DOM refs
+     **********************************************************************/
+    const shell = $("shell");
+    const watermark = $("watermark");
+    const logoWrap = $("logoWrap");
+    const messagesEl = $("messages");
+    const messageListEl = $("messageList");
+    const composerEl = $("composer");
+    const sendBtnEl = $("sendBtn");
+
+    /**********************************************************************
+     * Watermark effects: tilt + parallax + glow pulse on new message
+     **********************************************************************/
+    function setLogoGlowPulse(){
+      document.documentElement.style.setProperty("--logoGlow", "1");
+      clearTimeout(setLogoGlowPulse._t);
+      setLogoGlowPulse._t = setTimeout(() => {
+        document.documentElement.style.setProperty("--logoGlow", "0");
+      }, 380);
     }
 
-    function glowLogo() {
-      const logo = document.getElementById('apple-logo-bg');
-      logo.classList.add('glow');
-      setTimeout(() => logo.classList.remove('glow'), 1000);
+    shell.addEventListener("pointermove", (e) => {
+      const r = shell.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width;   // 0..1
+      const y = (e.clientY - r.top) / r.height;   // 0..1
+      const rotY = (x - 0.5) * 10;  // deg
+      const rotX = -(y - 0.5) * 8;  // deg
+      document.documentElement.style.setProperty("--tiltX", rotX.toFixed(2) + "deg");
+      document.documentElement.style.setProperty("--tiltY", rotY.toFixed(2) + "deg");
+      document.documentElement.style.setProperty("--logoScale", "1.004");
+    });
+
+    shell.addEventListener("pointerleave", () => {
+      document.documentElement.style.setProperty("--tiltX", "0deg");
+      document.documentElement.style.setProperty("--tiltY", "0deg");
+      document.documentElement.style.setProperty("--logoScale", "1");
+    });
+
+    messagesEl.addEventListener("scroll", () => {
+      const st = messagesEl.scrollTop;
+      const p = clamp(st / 900, 0, 1);
+      const y = (p * 28) - 10; // subtle
+      document.documentElement.style.setProperty("--logoParallax", y.toFixed(1) + "px");
+    }, { passive: true });
+
+    /**********************************************************************
+     * UX helpers: autosize textarea, near-bottom detection
+     **********************************************************************/
+    function autosizeTextarea(){
+      composerEl.style.height = "0px";
+      const h = clamp(composerEl.scrollHeight, 44, 140);
+      composerEl.style.height = h + "px";
+    }
+    composerEl.addEventListener("input", autosizeTextarea);
+    window.addEventListener("resize", autosizeTextarea);
+
+    function isNearBottom(thresholdPx=160){
+      const el = messagesEl;
+      return (el.scrollHeight - el.scrollTop - el.clientHeight) < thresholdPx;
     }
 
-    // ============================================
-    // DATABASE OPERATIONS
-    // ============================================
-    async function initUser() {
-      const deviceId = getDeviceId();
-      const deviceType = detectDevice();
+    function scrollToBottom(smooth=true){
+      const el = messagesEl;
+      const top = el.scrollHeight;
+      el.scrollTo({ top, behavior: smooth ? "smooth" : "auto" });
+    }
 
-      const {  existingUser } = await supabase
-        .from('users')
-        .select('*')
-        .eq('device_id', deviceId)
+    /**********************************************************************
+     * Settings modal
+     **********************************************************************/
+    function openSettings(){
+      $("displayNameInput").value = state.displayName;
+      $("personaLabel").textContent = state.persona;
+      $("personaToggle").classList.toggle("on", state.persona === "ios_user");
+      $("settingsOverlay").classList.add("show");
+    }
+    function closeSettings(){ $("settingsOverlay").classList.remove("show"); }
+    $("settingsBtn").addEventListener("click", openSettings);
+    $("closeSettingsBtn").addEventListener("click", closeSettings);
+    $("settingsOverlay").addEventListener("click", (e) => { if(e.target === $("settingsOverlay")) closeSettings(); });
+
+    function setPersona(newPersona){
+      state.persona = newPersona;
+      localStorage.setItem(STORAGE_KEYS.persona, newPersona);
+      $("personaChip").textContent = newPersona;
+      $("personaLabel").textContent = newPersona;
+      $("personaToggle").classList.toggle("on", newPersona === "ios_user");
+    }
+
+    $("personaToggle").addEventListener("click", () => {
+      setPersona(state.persona === "ios_user" ? "macos_user" : "ios_user");
+    });
+    $("personaToggle").addEventListener("keydown", (e) => {
+      if(e.key === "Enter" || e.key === " "){
+        e.preventDefault();
+        setPersona(state.persona === "ios_user" ? "macos_user" : "ios_user");
+      }
+    });
+
+    $("saveSettingsBtn").addEventListener("click", async () => {
+      const dn = safeTrim($("displayNameInput").value).slice(0, 32);
+      state.displayName = dn;
+      localStorage.setItem(STORAGE_KEYS.displayName, dn);
+      await upsertUserProfile(); // best-effort
+      closeSettings();
+      toast("Saved", "Settings updated.");
+    });
+
+    /**********************************************************************
+     * Sidebar / projects
+     **********************************************************************/
+    const isMobile = () => window.matchMedia("(max-width: 940px)").matches;
+    function updateMobileUI(){
+      $("toggleSidebarBtn").style.display = isMobile() ? "inline-flex" : "none";
+      $("sidebar").style.display = isMobile() ? "none" : "flex";
+    }
+    updateMobileUI();
+    window.addEventListener("resize", updateMobileUI);
+
+    $("toggleSidebarBtn").addEventListener("click", () => {
+      const sb = $("sidebar");
+      const showing = sb.style.display !== "none";
+      sb.style.display = showing ? "none" : "flex";
+    });
+
+    $("toggleTimestampsBtn").addEventListener("click", () => {
+      state.showTimestamps = !state.showTimestamps;
+      localStorage.setItem(STORAGE_KEYS.showTimestamps, String(state.showTimestamps));
+      renderMessages();
+      toast("Timestamps", state.showTimestamps ? "Showing timestamps." : "Hiding timestamps.");
+    });
+
+    $("copyDeviceBtn").addEventListener("click", () => copyToClipboard(state.deviceId));
+
+    $("projectSearch").addEventListener("input", debounce(() => {
+      renderProjects();
+    }, 120));
+
+    $("newProjectBtn").addEventListener("click", () => createProjectFlow());
+    $("joinProjectBtn").addEventListener("click", () => joinProjectFlow());
+    $("copyShareBtn").addEventListener("click", () => {
+      if(state.activeProject?.share_code) copyToClipboard(state.activeProject.share_code);
+    });
+
+    async function promptText(title, subtitle, placeholder, maxLen=64){
+      // Minimal prompt to keep single-file; uses window.prompt but with constraints
+      const v = window.prompt(`${title}\n${subtitle}`, placeholder || "");
+      if(v === null) return null;
+      return safeTrim(v).slice(0, maxLen);
+    }
+
+    async function createProjectFlow(){
+      const name = await promptText("Create project", "Give it a name (max 48 chars).", "New project", LIMITS.projectNameMax);
+      if(!name) return;
+
+      const shareCode = randomShareCode(LIMITS.shareCodeLen);
+
+      // Insert project (owner-only). share_code created server-side is also possible; here we set it explicitly.
+      const { data, error } = await supabase
+        .from("projects")
+        .insert({ name, share_code: shareCode })
+        .select("*")
         .single();
 
-      if (existingUser) {
-        currentUser = existingUser;
-      } else {
-        const {  newUser, error } = await supabase
-          .from('users')
-          .insert([{ device_id: deviceId, device_type: deviceType }])
-          .select()
-          .single();
+      if(error){
+        toast("Couldn't create project", error.message || "Unknown error", "error");
+        return;
+      }
+      toast("Project created", `Share code: ${data.share_code}`);
+      await loadProjects();
+      await setActiveProject(data.id, { shareCode: data.share_code });
+    }
 
-        if (error) {
-          console.error('Error creating user:', error);
-          showToast('Error initializing user');
+    async function joinProjectFlow(){
+      const code = await promptText("Join project", "Enter a share code (10 chars).", "", 24);
+      if(!code) return;
+      const share = code.replace(/\s+/g, "").toUpperCase();
+      if(share.length < 6){
+        toast("Invalid code", "Share code looks too short.");
+        return;
+      }
+
+      // Set header so RLS can allow selecting that project
+      activeShareCodeHeader = share;
+
+      // Try fetch project by share_code
+      const { data, error } = await supabase
+        .from("projects")
+        .select("*")
+        .eq("share_code", share)
+        .limit(1)
+        .maybeSingle();
+
+      if(error){
+        toast("Join failed", error.message || "Unknown error");
+        activeShareCodeHeader = null;
+        return;
+      }
+      if(!data){
+        toast("Not found", "No project matched that share code.");
+        activeShareCodeHeader = null;
+        return;
+      }
+
+      // Cache joined share code locally (UX convenience only)
+      const joined = new Set(JSON.parse(localStorage.getItem(STORAGE_KEYS.joinedShareCodes) || "[]"));
+      joined.add(share);
+      localStorage.setItem(STORAGE_KEYS.joinedShareCodes, JSON.stringify([...joined]));
+
+      toast("Joined", `Now viewing “${data.name}”.`);
+      await loadProjects();                 // Will include the joined project in list (via RLS)
+      await setActiveProject(data.id, { shareCode: share });
+      if(isMobile()) $("sidebar").style.display = "none";
+    }
+
+    function renderProjects(){
+      const list = $("projectList");
+      const q = safeTrim($("projectSearch").value).toLowerCase();
+      list.innerHTML = "";
+
+      const projects = state.projects
+        .filter(p => !q || (p.name || "").toLowerCase().includes(q) || (p.share_code || "").toLowerCase().includes(q));
+
+      if(!projects.length){
+        const empty = document.createElement("div");
+        empty.style.padding = "10px 8px";
+        empty.innerHTML = `<div style="font-weight:700; letter-spacing:-0.01em;">No projects</div>
+                           <div style="color:var(--muted); font-size:12px; margin-top:4px;">Create one, or join via share code.</div>`;
+        list.appendChild(empty);
+        return;
+      }
+
+      for(const p of projects){
+        const el = document.createElement("div");
+        el.className = "proj" + (p.id === state.activeProjectId ? " active" : "");
+        el.innerHTML = `
+          <div class="projMain">
+            <div class="projName">${escapeHtml(p.name || "Untitled")}</div>
+            <div class="projMeta">
+              <span class="badge"><span class="dot ${p.owner_id === state.userId ? "blue" : "green"}"></span>${p.owner_id === state.userId ? "Owned" : "Shared"}</span>
+              <span class="badge" title="Share code"><span style="font-family:var(--mono);">${escapeHtml(p.share_code || "")}</span></span>
+            </div>
+          </div>
+          <button class="iconBtn" title="Copy share code" style="width:34px;height:34px;border-radius:12px;">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" style="width:16px;height:16px;">
+              <path d="M9 9h10v10H9z"></path>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+          </button>
+        `;
+        const copyBtn = el.querySelector("button");
+        copyBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          if(p.share_code) copyToClipboard(p.share_code);
+        });
+        el.addEventListener("click", async () => {
+          // Set header so RLS can keep working for shared projects
+          // If owned, header isn't needed but harmless to set to current project's share_code
+          await setActiveProject(p.id, { shareCode: p.share_code || null });
+          if(isMobile()) $("sidebar").style.display = "none";
+        });
+        list.appendChild(el);
+      }
+    }
+
+    /**********************************************************************
+     * Messages rendering
+     **********************************************************************/
+    function escapeHtml(str){
+      return (str ?? "").toString()
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function renderMessages(){
+      messageListEl.innerHTML = "";
+      const showTs = state.showTimestamps;
+
+      for(const m of state.messages){
+        const row = document.createElement("div");
+        const dir = (m.sender_persona === state.persona) ? "out" : "in"; // iMessage-like: "me" on right
+        row.className = `rowMsg ${dir}`;
+
+        const bubble = document.createElement("div");
+        bubble.className = `bubble ${dir}`;
+
+        const text = document.createElement("div");
+        text.textContent = m.body || "";
+        bubble.appendChild(text);
+
+        // Copy button on every bubble
+        const copy = document.createElement("div");
+        copy.className = "copyBtn";
+        copy.title = "Copy message";
+        copy.innerHTML = `
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M9 9h10v10H9z"></path>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+          </svg>
+        `;
+        copy.addEventListener("click", (e) => {
+          e.stopPropagation();
+          copyToClipboard(m.body || "");
+        });
+        bubble.appendChild(copy);
+
+        // Metadata line (optional timestamp toggle)
+        if(showTs || (m.sender_name && safeTrim(m.sender_name))){
+          const meta = document.createElement("div");
+          meta.className = "metaLine";
+          const name = safeTrim(m.sender_name);
+          const parts = [];
+          if(name) parts.push(name);
+          if(showTs) parts.push(formatTime(m.created_at));
+          meta.textContent = parts.join(" • ");
+          bubble.appendChild(meta);
+        }
+
+        // 3D micro-tilt per bubble
+        bubble.addEventListener("pointermove", (e) => {
+          const r = bubble.getBoundingClientRect();
+          const x = (e.clientX - r.left) / r.width;
+          const y = (e.clientY - r.top) / r.height;
+          const ry = (x - 0.5) * 6;
+          const rx = -(y - 0.5) * 5;
+          bubble.style.transform = `translateY(-1px) rotateX(${rx.toFixed(2)}deg) rotateY(${ry.toFixed(2)}deg)`;
+        });
+        bubble.addEventListener("pointerleave", () => {
+          bubble.style.transform = "";
+        });
+
+        row.appendChild(bubble);
+        messageListEl.appendChild(row);
+      }
+    }
+
+    /**********************************************************************
+     * Sending messages
+     **********************************************************************/
+    function validateMessage(body){
+      const b = safeTrim(body);
+      if(!b) return { ok:false, reason:"Empty message." };
+      if(b.length > LIMITS.messageMax) return { ok:false, reason:`Too long (max ${LIMITS.messageMax}).` };
+      return { ok:true, body:b };
+    }
+
+    async function sendMessage(){
+      if(!state.activeProjectId){
+        toast("No project", "Create or join a project first.");
+        return;
+      }
+
+      const raw = composerEl.value;
+      const v = validateMessage(raw);
+      if(!v.ok){
+        toast("Can't send", v.reason);
+        return;
+      }
+
+      // Only autoscroll if user is near the bottom before sending
+      const shouldScroll = isNearBottom(220);
+
+      sendBtnEl.disabled = true;
+      composerEl.disabled = true;
+
+      const payload = {
+        project_id: state.activeProjectId,
+        body: v.body,
+        sender_persona: state.persona,
+        sender_name: safeTrim(state.displayName) || null
+      };
+
+      const { error } = await supabase.from("messages").insert(payload);
+
+      if(error){
+        toast("Send failed", error.message || "Unknown error");
+      }else{
+        composerEl.value = "";
+        autosizeTextarea();
+        // Realtime will append. If realtime is slow, we can optimistically append:
+        // but to avoid duplicates, we rely on realtime for cross-device consistency.
+        if(shouldScroll) scrollToBottom(true);
+      }
+
+      sendBtnEl.disabled = false;
+      composerEl.disabled = false;
+      composerEl.focus();
+    }
+
+    sendBtnEl.addEventListener("click", sendMessage);
+    composerEl.addEventListener("keydown", (e) => {
+      if(e.key === "Enter" && !e.shiftKey){
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+
+    /**********************************************************************
+     * Realtime subscriptions (messages per project)
+     **********************************************************************/
+    function setRealtimeStatus(text){
+      $("rtStatus").textContent = text;
+    }
+
+    async function subscribeMessages(projectId){
+      if(state.msgSub){
+        try{ await supabase.removeChannel(state.msgSub); }catch{}
+        state.msgSub = null;
+      }
+
+      setRealtimeStatus("Live");
+      const channel = supabase.channel(`messages:${projectId}`);
+
+      // Listen for inserts for the active project only
+      channel.on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "messages", filter: `project_id=eq.${projectId}` },
+        (payload) => {
+          const m = payload.new;
+          // If we are currently reading older messages, do not yank scroll
+          const shouldScroll = isNearBottom(220);
+          // De-dupe by id
+          if(!state.messages.some(x => x.id === m.id)){
+            state.messages.push(m);
+            // Keep stable ordering
+            state.messages.sort((a,b) => new Date(a.created_at) - new Date(b.created_at));
+            renderMessages();
+            if(shouldScroll) scrollToBottom(true);
+            setLogoGlowPulse();
+          }
+        }
+      );
+
+      channel.subscribe((status) => {
+        if(status === "SUBSCRIBED") setRealtimeStatus("Live");
+        else if(status === "CHANNEL_ERROR") setRealtimeStatus("Error");
+        else if(status === "TIMED_OUT") setRealtimeStatus("Timed out");
+        else setRealtimeStatus(status);
+      });
+
+      state.msgSub = channel;
+    }
+
+    /**********************************************************************
+     * Data loading
+     **********************************************************************/
+    function setProjectSkeleton(on){
+      $("projectSkeleton").style.display = on ? "block" : "none";
+      $("projectList").style.display = on ? "none" : "block";
+    }
+    function setMessageSkeleton(on){
+      $("messageSkeleton").style.display = on ? "block" : "none";
+      messageListEl.style.display = on ? "none" : "flex";
+    }
+
+    async function loadProjects(){
+      state.isLoadingProjects = true;
+      setProjectSkeleton(true);
+
+      // Strategy:
+      // - Owned projects visible via owner_id=auth.uid()
+      // - Shared projects visible if header x-share-code matches their share_code
+      // - For better UX, we also try any cached joined share codes by temporarily trying them and merging results.
+      const merged = new Map();
+
+      // 1) owned (no share header needed)
+      activeShareCodeHeader = null;
+      const owned = await supabase
+        .from("projects")
+        .select("*")
+        .order("updated_at", { ascending:false });
+
+      if(owned.error){
+        toast("Projects error", owned.error.message || "Could not load projects.");
+      }else{
+        for(const p of (owned.data || [])) merged.set(p.id, p);
+      }
+
+      // 2) joined share codes (try each; if RLS denies, it just returns none)
+      const joined = JSON.parse(localStorage.getItem(STORAGE_KEYS.joinedShareCodes) || "[]");
+      for(const code of joined.slice(0, 12)){ // keep it light
+        activeShareCodeHeader = code;
+        const shared = await supabase
+          .from("projects")
+          .select("*")
+          .eq("share_code", code)
+          .limit(1);
+
+        if(!shared.error){
+          for(const p of (shared.data || [])) merged.set(p.id, p);
+        }
+      }
+
+      // Restore header to active project share code if any
+      activeShareCodeHeader = state.activeProject?.share_code || null;
+
+      state.projects = [...merged.values()]
+        .sort((a,b) => new Date(b.updated_at) - new Date(a.updated_at));
+
+      state.isLoadingProjects = false;
+      setProjectSkeleton(false);
+      renderProjects();
+    }
+
+    async function loadMessages(projectId){
+      state.isLoadingMessages = true;
+      setMessageSkeleton(true);
+
+      const { data, error } = await supabase
+        .from("messages")
+        .select("*")
+        .eq("project_id", projectId)
+        .order("created_at", { ascending:true })
+        .limit(500);
+
+      if(error){
+        toast("Messages error", error.message || "Could not load messages.");
+        state.messages = [];
+      }else{
+        state.messages = data || [];
+      }
+
+      state.isLoadingMessages = false;
+      setMessageSkeleton(false);
+      renderMessages();
+
+      // Scroll to bottom initially
+      requestAnimationFrame(() => scrollToBottom(false));
+    }
+
+    async function setActiveProject(projectId, { shareCode=null } = {}){
+      // Ensure header set for RLS on shared project
+      activeShareCodeHeader = shareCode || activeShareCodeHeader;
+
+      const p = state.projects.find(x => x.id === projectId) || null;
+      state.activeProjectId = projectId;
+      state.activeProject = p;
+
+      localStorage.setItem(STORAGE_KEYS.lastProjectId, projectId);
+
+      $("activeProjectTitle").textContent = p?.name || "Project";
+      if(p?.share_code){
+        $("sharePill").style.display = "inline-flex";
+        $("shareCodeText").textContent = p.share_code;
+      }else{
+        $("sharePill").style.display = "none";
+      }
+
+      renderProjects();
+
+      await loadMessages(projectId);
+      await subscribeMessages(projectId);
+    }
+
+    /**********************************************************************
+     * Auth + user upsert (anonymous auth + device_id)
+     **********************************************************************/
+    async function ensureAuth(){
+      // Use Supabase anonymous sign-in so RLS can use auth.uid()
+      const { data: sessionData } = await supabase.auth.getSession();
+      if(sessionData?.session?.user){
+        state.userId = sessionData.session.user.id;
+        return;
+      }
+      const { data, error } = await supabase.auth.signInAnonymously();
+      if(error){
+        toast("Auth failed", error.message || "Anonymous sign-in failed.");
+        throw error;
+      }
+      state.userId = data.user.id;
+    }
+
+    async function upsertUserProfile(){
+      if(!state.userId) return;
+      const payload = {
+        id: state.userId,
+        device_id: state.deviceId,
+        persona: state.persona,
+        display_name: safeTrim(state.displayName) || null,
+        last_seen_at: new Date().toISOString()
+      };
+      const { error } = await supabase
+        .from("users")
+        .upsert(payload, { onConflict: "id" });
+      if(error){
+        // non-fatal
+        console.warn("User upsert failed:", error);
+      }
+    }
+
+    /**********************************************************************
+     * Boot
+     **********************************************************************/
+    function setPersonaChip(){
+      $("personaChip").textContent = state.persona;
+      $("personaLabel").textContent = state.persona;
+      $("personaToggle").classList.toggle("on", state.persona === "ios_user");
+    }
+
+    async function boot(){
+      // Basic config sanity check
+      if(!SUPABASE_URL.includes("supabase.co") || SUPABASE_ANON_KEY.startsWith("YOUR_")){
+        toast("Configure Supabase", "Paste your Supabase URL and anon key into index.html.");
+      }
+
+      setPersonaChip();
+
+      try{
+        await ensureAuth();
+        await upsertUserProfile();
+
+        // Load projects first
+        await loadProjects();
+
+        // Choose active project:
+        const last = localStorage.getItem(STORAGE_KEYS.lastProjectId);
+        let pick = null;
+
+        if(last && state.projects.some(p => p.id === last)){
+          pick = state.projects.find(p => p.id === last);
+        }else if(state.projects.length){
+          pick = state.projects[0];
+        }
+
+        if(!pick){
+          $("activeProjectTitle").textContent = "No projects yet";
+          $("sharePill").style.display = "none";
+          setRealtimeStatus("Idle");
+          state.messages = [];
+          renderMessages();
+          toast("Welcome", "Create a project or join via share code.");
           return;
         }
-        currentUser = newUser;
-      }
 
-      document.getElementById('device-badge').textContent = deviceType === 'ios_user' ? 'iOS' : 'macOS';
-    }
+        await setActiveProject(pick.id, { shareCode: pick.share_code || null });
 
-    async function loadProjects() {
-      const { data, error } = await supabase
-        .from('projects')
-        .select('*')
-        .eq('user_id', currentUser.id)
-        .order('created_at', { ascending: false });
+        // Tiny “online” hint
+        toast("Ready", "Realtime is active. Open on another device to see sync.");
 
-      if (error) {
-        console.error('Error loading projects:', error);
-        return;
-      }
-
-      projects = data || [];
-      renderProjects();
-
-      const lastProjectId = localStorage.getItem('last_project_id');
-      if (lastProjectId && projects.find(p => p.id === lastProjectId)) {
-        await selectProject(lastProjectId);
-      } else if (projects.length > 0) {
-        await selectProject(projects[0].id);
-      } else {
-        showEmptyProjectsState();
+      }catch(e){
+        console.error(e);
+        setRealtimeStatus("Error");
+        toast("Startup failed", "Check Supabase URL/key + SQL + Realtime settings.");
       }
     }
 
-    function showEmptyProjectsState() {
-      const container = document.getElementById('chat-container');
-      container.innerHTML = `
-        <div class="empty-state">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
-          </svg>
-          <h3>No Projects Yet</h3>
-          <p>Create a new project or join an existing one to begin chatting.</p>
-        </div>
-      `;
-    }
+    // Keep last_seen fresh (best-effort)
+    setInterval(() => upsertUserProfile(), 60_000);
 
-    function renderProjects() {
-      const container = document.getElementById('project-selector');
-      const addBtn = document.getElementById('add-project-btn');
-      
-      container.querySelectorAll('.project-chip:not(.add-new)').forEach(chip => chip.remove());
+    // iOS Safari sometimes suspends; refresh presence on focus
+    window.addEventListener("focus", () => upsertUserProfile());
 
-      projects.forEach(project => {
-        const chip = document.createElement('div');
-        chip.className = 'project-chip';
-        chip.textContent = project.name;
-        chip.dataset.projectId = project.id;
-        chip.addEventListener('click', () => selectProject(project.id));
-        container.insertBefore(chip, addBtn);
-      });
-    }
+    // Improve initial textarea height
+    autosizeTextarea();
 
-    async function createProject(name) {
-      const shareCode = generateShareCode();
-
-      // Bug Fix 1: Added .select() so we return the generated row, and we handle exceptions.
-      const { data, error } = await supabase
-        .from('projects')
-        .insert([{
-          name: name.trim(),
-          user_id: currentUser.id,
-          share_code: shareCode
-        }])
-        .select()
-        .single();
-
-      if (error) throw error;
-
-      projects.unshift(data);
-      renderProjects();
-      await selectProject(data.id);
-      showToast('Project created!');
-    }
-
-    async function joinProject(shareCode) {
-      const {  project, error: findError } = await supabase
-        .from('projects')
-        .select('*')
-        .eq('share_code', shareCode.toUpperCase())
-        .single();
-
-      if (findError || !project) throw new Error('Project not found');
-
-      if (projects.find(p => p.share_code === project.share_code)) {
-        await selectProject(project.id);
-        throw new Error('Already in this project');
-      }
-
-      const {  newProject, error: joinError } = await supabase
-        .from('projects')
-        .insert([{
-          name: project.name,
-          user_id: currentUser.id,
-          share_code: project.share_code
-        }])
-        .select()
-        .single();
-
-      if (joinError) throw joinError;
-
-      projects.unshift(newProject);
-      renderProjects();
-      await selectProject(newProject.id);
-      showToast('Joined project!');
-    }
-
-    async function selectProject(projectId) {
-      currentProject = projects.find(p => p.id === projectId);
-      if (!currentProject) return;
-
-      document.querySelectorAll('.project-chip').forEach(chip => {
-        chip.classList.toggle('active', chip.dataset.projectId === projectId);
-      });
-
-      localStorage.setItem('last_project_id', projectId);
-
-      if (messageSubscription) messageSubscription.unsubscribe();
-
-      await loadMessages();
-      subscribeToMessages();
-    }
-
-    async function loadMessages() {
-      const chatContainer = document.getElementById('chat-container');
-      chatContainer.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
-
-      const { data, error } = await supabase
-        .from('messages')
-        .select('*')
-        .eq('share_code', currentProject.share_code)
-        .order('created_at', { ascending: true });
-
-      if (error) {
-        chatContainer.innerHTML = '<div class="empty-state">Error loading messages</div>';
-        return;
-      }
-
-      messages = data || [];
-      renderMessages();
-    }
-
-    function renderMessages() {
-      const chatContainer = document.getElementById('chat-container');
-      chatContainer.innerHTML = '';
-
-      if (messages.length === 0) {
-        chatContainer.innerHTML = `
-          <div class="empty-state">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-            </svg>
-            <h3>It's quiet here</h3>
-            <p>Send a message to start the conversation.</p>
-          </div>
-        `;
-        return;
-      }
-
-      messages.forEach(msg => {
-        chatContainer.appendChild(createMessageElement(msg));
-      });
-      scrollToBottom();
-    }
-
-    function createMessageElement(msg) {
-      const isSent = msg.user_id === currentUser.id;
-      const messageDiv = document.createElement('div');
-      messageDiv.className = `message ${isSent ? 'sent' : 'received'}`;
-
-      const bubble = document.createElement('div');
-      bubble.className = 'message-bubble';
-
-      const text = document.createElement('div');
-      text.className = 'message-text';
-      text.textContent = msg.content;
-
-      const meta = document.createElement('div');
-      meta.className = 'message-meta';
-      meta.textContent = new Date(msg.created_at).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
-
-      bubble.appendChild(text);
-      bubble.appendChild(meta);
-
-      const copyBtn = document.createElement('button');
-      copyBtn.className = 'copy-btn';
-      copyBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>';
-      copyBtn.addEventListener('click', () => {
-        navigator.clipboard.writeText(msg.content);
-        showToast('Copied!');
-      });
-
-      messageDiv.appendChild(bubble);
-      messageDiv.appendChild(copyBtn);
-
-      return messageDiv;
-    }
-
-    function subscribeToMessages() {
-      messageSubscription = supabase
-        .channel(`messages:${currentProject.share_code}`)
-        .on('postgres_changes', {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'messages',
-          filter: `share_code=eq.${currentProject.share_code}`
-        }, (payload) => {
-          const newMessage = payload.new;
-          
-          // Prevent duplicates if optimistic UI already added it
-          if (!messages.find(m => m.id === newMessage.id)) {
-            messages.push(newMessage);
-            const chatContainer = document.getElementById('chat-container');
-            const emptyState = chatContainer.querySelector('.empty-state');
-            if (emptyState) emptyState.remove();
-
-            chatContainer.appendChild(createMessageElement(newMessage));
-            scrollToBottom();
-            glowLogo();
-          }
-        })
-        .subscribe();
-    }
-
-    async function sendMessage(content) {
-      if (!content || content.trim().length === 0) return;
-      if (!currentProject) { showToast('Please select a project first'); return; }
-
-      const input = document.getElementById('message-input');
-      const sendBtn = document.getElementById('send-btn');
-      
-      // Bug Fix 2: Reset UI and disable button optimistically.
-      input.value = '';
-      input.style.height = 'auto'; 
-      sendBtn.disabled = true;
-
-      // Ensure we request the inserted row using .select().single()
-      const { data, error } = await supabase
-        .from('messages')
-        .insert([{
-          content: content.trim(),
-          user_id: currentUser.id,
-          share_code: currentProject.share_code
-        }])
-        .select()
-        .single();
-
-      if (error) {
-        console.error('Error sending message:', error);
-        showToast('Error sending message');
-        // Revert UI on failure
-        input.value = content;
-        sendBtn.disabled = false;
-        return;
-      }
-
-      // Optimistic Update: Append instantly if realtime channel hasn't caught it yet
-      if (data && !messages.find(m => m.id === data.id)) {
-        messages.push(data);
-        const chatContainer = document.getElementById('chat-container');
-        const emptyState = chatContainer.querySelector('.empty-state');
-        if (emptyState) emptyState.remove();
-
-        chatContainer.appendChild(createMessageElement(data));
-        scrollToBottom();
-      }
-    }
-
-    function scrollToBottom() {
-      const chatContainer = document.getElementById('chat-container');
-      chatContainer.scrollTop = chatContainer.scrollHeight;
-    }
-
-    // ============================================
-    // EVENT LISTENERS
-    // ============================================
-    function updateSendButton() {
-      const input = document.getElementById('message-input');
-      document.getElementById('send-btn').disabled = input.value.trim().length === 0;
-    }
-
-    document.getElementById('message-input').addEventListener('input', (e) => {
-      updateSendButton();
-      // Auto-resize textarea seamlessly
-      e.target.style.height = 'auto';
-      e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px';
-    });
-
-    document.getElementById('message-input').addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        sendMessage(e.target.value);
-      }
-    });
-
-    document.getElementById('send-btn').addEventListener('click', () => {
-      sendMessage(document.getElementById('message-input').value);
-    });
-
-    // Modals
-    document.getElementById('add-project-btn').addEventListener('click', () => {
-      showModal('new-project-modal');
-      setTimeout(() => document.getElementById('project-name-input').focus(), 100);
-    });
-
-    document.getElementById('cancel-project-btn').addEventListener('click', () => {
-      hideModal('new-project-modal');
-      document.getElementById('project-name-input').value = '';
-    });
-
-    // Fixed Create Project logic
-    document.getElementById('create-project-btn').addEventListener('click', async () => {
-      const input = document.getElementById('project-name-input');
-      const btn = document.getElementById('create-project-btn');
-      
-      if (!input.value.trim()) { showToast('Project name required'); return; }
-      
-      try {
-        btn.disabled = true;
-        btn.textContent = 'Creating...';
-        await createProject(input.value);
-        
-        hideModal('new-project-modal');
-        input.value = '';
-      } catch (error) {
-        showToast(error.message || 'Error creating project');
-      } finally {
-        btn.disabled = false;
-        btn.textContent = 'Create';
-      }
-    });
-
-    document.getElementById('settings-btn').addEventListener('click', () => {
-      showModal('join-project-modal');
-      setTimeout(() => document.getElementById('share-code-input').focus(), 100);
-    });
-
-    document.getElementById('cancel-join-btn').addEventListener('click', () => {
-      hideModal('join-project-modal');
-      document.getElementById('share-code-input').value = '';
-    });
-
-    // Fixed Join Project Logic
-    document.getElementById('join-project-btn').addEventListener('click', async () => {
-      const input = document.getElementById('share-code-input');
-      const btn = document.getElementById('join-project-btn');
-      
-      if (input.value.trim().length !== 6) { showToast('Invalid 6-digit code'); return; }
-      
-      try {
-        btn.disabled = true;
-        btn.textContent = 'Joining...';
-        await joinProject(input.value);
-        
-        hideModal('join-project-modal');
-        input.value = '';
-      } catch (error) {
-        showToast(error.message || 'Error joining project');
-      } finally {
-        btn.disabled = false;
-        btn.textContent = 'Join';
-      }
-    });
-
-    document.getElementById('share-btn').addEventListener('click', () => {
-      if (!currentProject) { showToast('Select a project first'); return; }
-      document.getElementById('share-code-value').textContent = currentProject.share_code;
-      showModal('share-project-modal');
-    });
-
-    document.getElementById('close-share-btn').addEventListener('click', () => hideModal('share-project-modal'));
-
-    document.getElementById('copy-code-btn').addEventListener('click', () => {
-      navigator.clipboard.writeText(currentProject.share_code);
-      showToast('Code copied to clipboard!');
-    });
-
-    // Close Modals on background click
-    document.querySelectorAll('.modal').forEach(modal => {
-      modal.addEventListener('click', (e) => {
-        if (e.target === modal) hideModal(modal.id);
-      });
-    });
-
-    // ============================================
-    // APP INITIALIZATION
-    // ============================================
-    async function init() {
-      try {
-        await initUser();
-        await loadProjects();
-        initAppleLogoEffects();
-      } catch (error) {
-        console.error('Initialization error:', error);
-        showToast('Error connecting to database');
-      }
-    }
-
-    init();
+    boot();
   </script>
 </body>
 </html>
